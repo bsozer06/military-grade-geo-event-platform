@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bHx/qqJCqtg=",
+  "dgSpecHash": "44cXmap7OoA=",
   "success": true,
   "projectFilePath": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\backend\\src\\GeoEvents.Api\\GeoEvents.Api.csproj",
   "expectedPackageFiles": [
@@ -29,6 +29,9 @@
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.0\\microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.dependencymodel\\9.0.1\\microsoft.extensions.dependencymodel.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.diagnostics.abstractions\\10.0.0\\microsoft.extensions.diagnostics.abstractions.10.0.0.nupkg.sha512",
+    "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.diagnostics.healthchecks\\9.0.0\\microsoft.extensions.diagnostics.healthchecks.9.0.0.nupkg.sha512",
+    "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.diagnostics.healthchecks.abstractions\\9.0.0\\microsoft.extensions.diagnostics.healthchecks.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.diagnostics.healthchecks.entityframeworkcore\\9.0.0\\microsoft.extensions.diagnostics.healthchecks.entityframeworkcore.9.0.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\10.0.0\\microsoft.extensions.fileproviders.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\10.0.0\\microsoft.extensions.hosting.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\microsoft.extensions.logging\\9.0.1\\microsoft.extensions.logging.9.0.1.nupkg.sha512",
@@ -42,6 +45,7 @@
     "C:\\Users\\Burhan\\.nuget\\packages\\nettopologysuite.io.postgis\\2.1.0\\nettopologysuite.io.postgis.2.1.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql\\9.0.1\\npgsql.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.1\\npgsql.entityframeworkcore.postgresql.9.0.1.nupkg.sha512",
+    "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql.nettopologysuite\\9.0.1\\npgsql.entityframeworkcore.postgresql.nettopologysuite.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.nettopologysuite\\9.0.1\\npgsql.nettopologysuite.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\rabbitmq.client\\6.8.1\\rabbitmq.client.6.8.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",

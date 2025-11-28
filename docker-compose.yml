@@ -12,7 +12,7 @@ services:
       # Enable PostGIS extension automatically
       POSTGRES_INITDB_ARGS: "-E UTF8"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init-postgis.sql:/docker-entrypoint-initdb.d/01-init-postgis.sql:ro

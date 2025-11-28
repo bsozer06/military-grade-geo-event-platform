@@ -15,7 +15,7 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Geo
         
         // Default connection string for design-time migrations
         // In production this comes from configuration
-        var connectionString = "Host=localhost;Port=5432;Database=geoevents;Username=postgres;Password=postgres";
+        var connectionString = "Host=localhost;Port=5433;Database=geoevents;Username=geouser;Password=geopass123";
         
         optionsBuilder.UseNpgsql(connectionString, o =>
         {

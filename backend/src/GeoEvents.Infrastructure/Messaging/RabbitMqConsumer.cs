@@ -110,20 +110,15 @@ public sealed class RabbitMqConsumer : BackgroundService
             UserName = _options.Username,
             Password = _options.Password,
             VirtualHost = _options.VirtualHost,
-            DispatchConsumersAsync = true
+            DispatchConsumersAsync = false // Using EventingBasicConsumer (sync) with Task.Run wrapper
         };
 
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
 
-        // Declare queue (should already exist from docker-compose definitions, but safe to redeclare)
-        _channel.QueueDeclare(
-            queue: _queueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
-
+        // Queue already declared in rabbitmq-definitions.json with TTL and DLX settings
+        // No need to redeclare, just use it
+        
         _channel.BasicQos(prefetchSize: 0, prefetchCount: 10, global: false);
 
         await Task.CompletedTask;
