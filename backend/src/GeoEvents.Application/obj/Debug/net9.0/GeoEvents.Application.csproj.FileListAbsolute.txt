@@ -13,3 +13,4 @@ C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.App
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Application\obj\Debug\net9.0\refint\GeoEvents.Application.dll
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Application\obj\Debug\net9.0\GeoEvents.Application.pdb
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Application\obj\Debug\net9.0\ref\GeoEvents.Application.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Application\obj\Debug\net9.0\GeoEvents.Application.sourcelink.json

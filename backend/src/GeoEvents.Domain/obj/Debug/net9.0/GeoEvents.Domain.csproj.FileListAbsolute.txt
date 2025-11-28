@@ -9,3 +9,4 @@ C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Dom
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\refint\GeoEvents.Domain.dll
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.pdb
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\ref\GeoEvents.Domain.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.sourcelink.json
