@@ -16,3 +16,6 @@ C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Inf
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\obj\Debug\net9.0\GeoEvents.Infrastructure.pdb
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\obj\Debug\net9.0\ref\GeoEvents.Infrastructure.dll
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\obj\Debug\net9.0\GeoEvents.Infrastructure.sourcelink.json
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\obj\Debug\net9.0\EFCoreNpgsqlNetTopologySuite.cs
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\bin\Debug\net9.0\GeoEvents.Infrastructure.runtimeconfig.json
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Infrastructure\obj\Debug\net9.0\GeoEvents.Infrastructure.genruntimeconfig.cache
