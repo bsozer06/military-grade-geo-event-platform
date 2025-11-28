@@ -1,0 +1,11 @@
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\bin\Debug\net9.0\GeoEvents.Domain.deps.json
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\bin\Debug\net9.0\GeoEvents.Domain.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\bin\Debug\net9.0\GeoEvents.Domain.pdb
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.AssemblyInfoInputs.cache
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.AssemblyInfo.cs
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.csproj.CoreCompileInputs.cache
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\refint\GeoEvents.Domain.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\GeoEvents.Domain.pdb
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Domain\obj\Debug\net9.0\ref\GeoEvents.Domain.dll

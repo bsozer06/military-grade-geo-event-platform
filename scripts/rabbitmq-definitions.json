@@ -1,0 +1,138 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "users": [
+    {
+      "name": "geouser",
+      "password": "geopass123",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "geouser",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "geo.events",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "geo.events.dlx",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "geo.unit.positions",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 300000,
+        "x-dead-letter-exchange": "geo.events.dlx",
+        "x-dead-letter-routing-key": "dlq.unit.position"
+      }
+    },
+    {
+      "name": "geo.zone.violations",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 600000,
+        "x-dead-letter-exchange": "geo.events.dlx",
+        "x-dead-letter-routing-key": "dlq.zone.violation"
+      }
+    },
+    {
+      "name": "geo.proximity.alerts",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 300000,
+        "x-dead-letter-exchange": "geo.events.dlx",
+        "x-dead-letter-routing-key": "dlq.proximity.alert"
+      }
+    },
+    {
+      "name": "geo.sensor.detections",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 600000,
+        "x-dead-letter-exchange": "geo.events.dlx",
+        "x-dead-letter-routing-key": "dlq.sensor.detection"
+      }
+    },
+    {
+      "name": "geo.dead.letter.queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "geo.events",
+      "vhost": "/",
+      "destination": "geo.unit.positions",
+      "destination_type": "queue",
+      "routing_key": "geo.unit.position",
+      "arguments": {}
+    },
+    {
+      "source": "geo.events",
+      "vhost": "/",
+      "destination": "geo.zone.violations",
+      "destination_type": "queue",
+      "routing_key": "geo.zone.violation",
+      "arguments": {}
+    },
+    {
+      "source": "geo.events",
+      "vhost": "/",
+      "destination": "geo.proximity.alerts",
+      "destination_type": "queue",
+      "routing_key": "geo.proximity.#",
+      "arguments": {}
+    },
+    {
+      "source": "geo.events",
+      "vhost": "/",
+      "destination": "geo.sensor.detections",
+      "destination_type": "queue",
+      "routing_key": "geo.sensor.#",
+      "arguments": {}
+    },
+    {
+      "source": "geo.events.dlx",
+      "vhost": "/",
+      "destination": "geo.dead.letter.queue",
+      "destination_type": "queue",
+      "routing_key": "dlq.#",
+      "arguments": {}
+    }
+  ]
+}

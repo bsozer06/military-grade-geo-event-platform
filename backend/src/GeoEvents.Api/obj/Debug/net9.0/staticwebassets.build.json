@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "12ndsXKhCejt6n6xa3/QuhOgB3CZH4KJXFr5rUzsVIc=",
+  "Source": "GeoEvents.Api",
+  "BasePath": "_content/GeoEvents.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

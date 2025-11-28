@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\GeoEvents.Api.props" />
+</Project>

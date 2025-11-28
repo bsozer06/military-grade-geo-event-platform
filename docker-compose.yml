@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with PostGIS extension for spatial queries
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: geoevents-postgres
+    environment:
+      POSTGRES_DB: geoevents
+      POSTGRES_USER: geouser
+      POSTGRES_PASSWORD: geopass123
+      # Enable PostGIS extension automatically
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-postgis.sql:/docker-entrypoint-initdb.d/01-init-postgis.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geouser -d geoevents"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - geoevents-network
+
+  # RabbitMQ message broker with management UI
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: geoevents-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: geouser
+      RABBITMQ_DEFAULT_PASS: geopass123
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "5672:5672"   # AMQP protocol
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./scripts/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./scripts/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - geoevents-network
+
+  # Backend API (uncomment when ready)
+  # api:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: src/GeoEvents.Api/Dockerfile
+  #   container_name: geoevents-api
+  #   environment:
+  #     ASPNETCORE_ENVIRONMENT: Development
+  #     ASPNETCORE_URLS: http://+:8080
+  #     ConnectionStrings__PostgreSQL: "Host=postgres;Port=5432;Database=geoevents;Username=geouser;Password=geopass123"
+  #     RabbitMQ__Host: rabbitmq
+  #     RabbitMQ__Port: 5672
+  #     RabbitMQ__Username: geouser
+  #     RabbitMQ__Password: geopass123
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   networks:
+  #     - geoevents-network
+
+  # Simulator (uncomment when ready)
+  # simulator:
+  #   build:
+  #     context: ./simulator
+  #     dockerfile: Dockerfile
+  #   container_name: geoevents-simulator
+  #   environment:
+  #     RabbitMQ__Host: rabbitmq
+  #     RabbitMQ__Port: 5672
+  #     RabbitMQ__Username: geouser
+  #     RabbitMQ__Password: geopass123
+  #     Simulator__Scenario: convoy
+  #     Simulator__EventRate: 10
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #   networks:
+  #     - geoevents-network
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  geoevents-network:
+    driver: bridge

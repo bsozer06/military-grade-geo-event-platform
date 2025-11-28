@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "GeoEvents.Application/1.0.0": {
+        "dependencies": {
+          "GeoEvents.Domain": "1.0.0"
+        },
+        "runtime": {
+          "GeoEvents.Application.dll": {}
+        }
+      },
+      "GeoEvents.Domain/1.0.0": {
+        "runtime": {
+          "GeoEvents.Domain.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GeoEvents.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "GeoEvents.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
