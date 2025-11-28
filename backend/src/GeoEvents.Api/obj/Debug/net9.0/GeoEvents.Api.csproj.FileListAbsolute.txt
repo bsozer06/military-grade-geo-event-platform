@@ -37,3 +37,4 @@ C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api\obj\Debug\net9.0\GeoEvents.Api.pdb
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api\obj\Debug\net9.0\GeoEvents.Api.genruntimeconfig.cache
 C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api\obj\Debug\net9.0\ref\GeoEvents.Api.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api\obj\Debug\net9.0\GeoEvents.Api.sourcelink.json
