@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bHx/qqJCqtg=",
+  "dgSpecHash": "0LcuCHo0DFk=",
   "success": true,
   "projectFilePath": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\backend\\src\\GeoEvents.Api\\GeoEvents.Api.csproj",
   "expectedPackageFiles": [
@@ -42,6 +42,7 @@
     "C:\\Users\\Burhan\\.nuget\\packages\\nettopologysuite.io.postgis\\2.1.0\\nettopologysuite.io.postgis.2.1.0.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql\\9.0.1\\npgsql.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.1\\npgsql.entityframeworkcore.postgresql.9.0.1.nupkg.sha512",
+    "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql.nettopologysuite\\9.0.1\\npgsql.entityframeworkcore.postgresql.nettopologysuite.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\npgsql.nettopologysuite\\9.0.1\\npgsql.nettopologysuite.9.0.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\rabbitmq.client\\6.8.1\\rabbitmq.client.6.8.1.nupkg.sha512",
     "C:\\Users\\Burhan\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
