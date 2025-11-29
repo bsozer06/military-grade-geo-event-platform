@@ -1,0 +1,20 @@
+{
+  "name": "convoy-proximity-demo",
+  "description": "Three units near a zone; proximity + zone violation testing.",
+  "seed": 12345,
+  "units": [
+    { "identifier": "unit-01", "lat": 41.1008, "lon": 29.0012, "headingDeg": 45, "role": "leader" },
+    { "identifier": "unit-02", "lat": 41.1010, "lon": 29.0018, "headingDeg": 270, "role": "escort" },
+    { "identifier": "unit-03", "lat": 41.0999, "lon": 29.0005, "headingDeg": 120, "role": "escort" }
+  ],
+  "zone": {
+    "zoneId": "zone-alpha",
+    "centerLat": 41.1050,
+    "centerLon": 29.0050,
+    "radiusMeters": 180
+  },
+  "proximity": {
+    "thresholdMeters": 75,
+    "repeatSuppressSeconds": 30
+  }
+}

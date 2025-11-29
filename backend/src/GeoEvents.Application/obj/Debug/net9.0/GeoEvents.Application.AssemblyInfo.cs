@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GeoEvents.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51a33978c3416032b96758e3c638e4f3dbb90cca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6366ea8169b3a04164053c074c242381dd6e75ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("GeoEvents.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GeoEvents.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
