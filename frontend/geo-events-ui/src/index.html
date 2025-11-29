@@ -13,5 +13,9 @@
   <script>
     // Ensure Cesium loads runtime assets from Angular's public path
     window.CESIUM_BASE_URL = '/assets/cesium';
+    
+    // Configure SignalR URL for live backend connection
+    // Comment out the line below to run in standalone mock mode
+    window.__GEO_EVENTS_SIGNALR_URL__ = 'http://localhost:5045/hub/events';
   </script>
 </html>

@@ -3,6 +3,7 @@
   <div class="status">
     <span class="dot" [class.ok]="connected()" [class.off]="!connected()"></span>
     <span>{{ connected() ? 'Connected' : 'Offline' }}</span>
+    <span *ngIf="lastError()" class="warn" [title]="lastError()!">Backend unavailable</span>
   </div>
   <div class="actions">
     <button type="button" (click)="toggleMock()">{{ running() ? 'Stop' : 'Start' }} Mock</button>

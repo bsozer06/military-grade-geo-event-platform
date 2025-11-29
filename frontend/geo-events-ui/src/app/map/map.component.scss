@@ -16,3 +16,13 @@
 .map-overlay button { background:#1f2733; color:#e6eef8; border:1px solid #2a3240; padding:6px 10px; border-radius:4px; cursor:pointer; }
 .map-overlay button:hover { background:#283244; }
 .map-overlay .toggle { color:#e6eef8; display:flex; gap:6px; align-items:center; }
+
+/* Group zoom buttons neatly and space from other controls */
+.map-overlay .zoom-group {
+	display: flex;
+	gap: 6px;
+	margin-right: 8px;
+}
+
+.zoom-group { display:flex; gap:6px; }
+.zoom-group button { width:32px; padding:6px 0; font-weight:600; }

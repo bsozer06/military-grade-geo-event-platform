@@ -19,9 +19,11 @@ export class HeaderComponent {
   connected = signal<boolean>(false);
   running = signal<boolean>(false);
   count = signal<number>(0);
+  lastError = signal<string | null>(null);
 
   constructor() {
     this.stream.connectionState().subscribe(v => this.connected.set(!!v));
+    this.stream.connectionError().subscribe(e => this.lastError.set(e));
     this.mock.isRunning().subscribe(v => this.running.set(!!v));
     this.store.events$.subscribe(list => this.count.set(list.length));
   }

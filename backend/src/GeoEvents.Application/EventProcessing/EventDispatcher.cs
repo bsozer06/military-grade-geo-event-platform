@@ -9,15 +9,18 @@ namespace GeoEvents.Application.EventProcessing;
 
 /// <summary>
 /// Default event dispatcher that resolves handlers dynamically.
+/// Also broadcasts to real-time clients if broadcaster is registered.
 /// </summary>
 public sealed class EventDispatcher : IEventDispatcher
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IEventBroadcaster? _broadcaster;
     private static readonly ConcurrentDictionary<Type, Type[]> _handlerCache = new();
 
-    public EventDispatcher(IServiceProvider serviceProvider)
+    public EventDispatcher(IServiceProvider serviceProvider, IEventBroadcaster? broadcaster = null)
     {
         _serviceProvider = serviceProvider;
+        _broadcaster = broadcaster;
     }
 
     public async Task DispatchAsync(object dto, CancellationToken cancellationToken = default)
@@ -48,6 +51,12 @@ public sealed class EventDispatcher : IEventDispatcher
             var task = method.Invoke(handler, new[] { dto, cancellationToken });
             if (task is Task awaited)
                 await awaited.ConfigureAwait(false);
+        }
+
+        // Broadcast to real-time clients
+        if (_broadcaster is not null)
+        {
+            await _broadcaster.BroadcastAsync(dto, cancellationToken);
         }
     }
 }

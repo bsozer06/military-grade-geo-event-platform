@@ -61,7 +61,7 @@ Real-time geospatial event visualization using Angular 21 + Cesium + milsymbol. 
    cd backend/src/GeoEvents.Api
    dotnet run
    ```
-   Backend runs on `http://localhost:5000`
+   Backend runs on `http://localhost:5045` (configured in launchSettings.json)
 
 3. **Start Simulator (in a new terminal):**
    ```bash
@@ -71,12 +71,14 @@ Real-time geospatial event visualization using Angular 21 + Cesium + milsymbol. 
    Simulator publishes events to RabbitMQ every second
 
 4. **Configure SignalR URL in frontend:**
-   Edit `frontend/geo-events-ui/src/index.html` and add before `</head>`:
+   The frontend needs to know where to connect for real-time events. Add this to `frontend/geo-events-ui/src/index.html` before `</head>`:
    ```html
    <script>
-     window.__GEO_EVENTS_SIGNALR_URL__ = 'http://localhost:5000/hub/events';
+     window.__GEO_EVENTS_SIGNALR_URL__ = 'http://localhost:5045/hub/events';
    </script>
    ```
+   
+   **Note:** This step is already done in the committed `index.html`. The port (5045) is configured in `backend/src/GeoEvents.Api/Properties/launchSettings.json`.
 
 5. **Start Frontend:**
    ```bash

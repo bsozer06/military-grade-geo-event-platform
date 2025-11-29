@@ -1,4 +1,8 @@
 <div class="map-overlay">
+	<div class="zoom-group">
+		<button type="button" (click)="zoomIn()">+</button>
+		<button type="button" (click)="zoomOut()">−</button>
+	</div>
 	<button type="button" (click)="fitToData()">Fit to Data</button>
 	<label class="toggle">
 		<input type="checkbox" [checked]="followLatest" (change)="toggleFollow($any($event.target).checked)"/>

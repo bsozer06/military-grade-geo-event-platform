@@ -12,8 +12,8 @@
       <div class="time">{{ e.timestamp | date:'medium' }}</div>
       <div class="type">{{ e.type }}</div>
       <div class="src">{{ e.source }}</div>
-      <div class="loc" *ngIf="e.location">{{ e.location.lat | number:'1.4-4' }}, {{ e.location.lon | number:'1.4-4' }}</div>
-      <pre class="meta">{{ e.metadata | json }}</pre>
+      <div class="loc" *ngIf="e.latitude">{{ e.latitude | number:'1.4-4' }}, {{ e.longitude | number:'1.4-4' }}</div>
+      <pre class="meta">{{ e| json }}</pre>
     </li>
   </ul>
 </div>

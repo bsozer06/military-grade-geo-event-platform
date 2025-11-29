@@ -41,7 +41,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       navigationHelpButton: true
     });
     this.entities = this.viewer.entities;
-    this.sub = this.store.events$.subscribe(list => {
+    // Subscribe to individual events, not the full list
+    this.sub = this.store.filtered$.subscribe(list => {
+      // Process newest event (first in array)
       const e = list[0];
       if (!e || e.eventId === this.lastEventId) return;
       this.lastEventId = e.eventId;
@@ -50,46 +52,50 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   private onEvent(e: GeoEvent) {
-    if (isUnitPosition(e)) {
-      const id = e.source;
-      const lat = e.location.lat;
-      const lon = e.location.lon;
-      const speed = e.metadata?.speed;
-      const heading = e.metadata?.heading;
-      const existing = this.entities?.getById(id);
-      const img = this.symbols.buildSymbol('SFGPUCI----K', { size: 42, uniqueDesignation: id }); // Example SIDC
-      const position = Cartesian3.fromDegrees(lon, lat);
-      if (!existing) {
-        this.entities?.add({
-          id,
-          position: new ConstantPositionProperty(position),
-          billboard: {
-            image: img,
-            verticalOrigin: VerticalOrigin.BOTTOM,
-            scale: 1.0
-          },
-          label: {
-            text: new ConstantProperty(heading !== undefined ? `${id} h:${heading}` : id),
-            font: '12px sans-serif',
-            fillColor: Color.WHITE
-          }
-        });
-        if (!this.hasZoomed && this.viewer && this.entities && this.entities.values.length > 0) {
-          this.hasZoomed = true;
-          this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
+    if (!isUnitPosition(e)) return;
+
+    const id = e.source;
+    const lat = e.latitude;
+    const lon = e.longitude;
+    const heading = e.headingDegrees;
+    const existing = this.entities?.getById(id);
+    const img = this.symbols.buildSymbol('SFGPUCI----K', { size: 42, uniqueDesignation: id });
+    const position = Cartesian3.fromDegrees(lon, lat);
+
+    if (!existing) {
+      this.entities?.add({
+        id,
+        position: new ConstantPositionProperty(position),
+        billboard: {
+          image: img,
+          verticalOrigin: VerticalOrigin.BOTTOM,
+          scale: 1.0
+        },
+        label: {
+          text: new ConstantProperty(heading !== undefined ? `${id} h:${heading}` : id),
+          font: '12px sans-serif',
+          fillColor: Color.WHITE
         }
+      });
+      if (!this.hasZoomed && this.viewer && this.entities && this.entities.values.length > 0) {
+        this.hasZoomed = true;
+        this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
+      }
+    } else {
+      if (existing.position instanceof ConstantPositionProperty) {
+        (existing.position as ConstantPositionProperty).setValue(position);
       } else {
         existing.position = new ConstantPositionProperty(position);
-        if (existing.label) {
-          existing.label.text = new ConstantProperty(heading !== undefined ? `${id} h:${heading}` : id);
-        }
       }
+      if (existing.label && existing.label.text instanceof ConstantProperty) {
+        (existing.label.text as ConstantProperty).setValue(heading !== undefined ? `${id} h:${heading}` : id);
+      }
+    }
 
-      if (this.followLatest && this.viewer) {
-        const ent = this.entities?.getById(id);
-        if (ent) {
-          this.viewer.flyTo(ent, { offset: new HeadingPitchRange(0, -0.6, 150000) });
-        }
+    if (this.followLatest && this.viewer) {
+      const ent = this.entities?.getById(id);
+      if (ent) {
+        this.viewer.flyTo(ent, { offset: new HeadingPitchRange(0, -0.6, 150000) });
       }
     }
   }
@@ -102,6 +108,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   toggleFollow(on: boolean) {
     this.followLatest = on;
+  }
+
+  zoomIn() {
+    const camera = this.viewer?.camera;
+    if (!camera) return;
+    const height = camera.positionCartographic.height;
+    const amount = Math.max(height * 0.2, camera.defaultZoomAmount);
+    camera.zoomIn(amount);
+  }
+
+  zoomOut() {
+    const camera = this.viewer?.camera;
+    if (!camera) return;
+    const height = camera.positionCartographic.height;
+    const amount = Math.max(height * 0.2, camera.defaultZoomAmount);
+    camera.zoomOut(amount);
   }
 
   ngOnDestroy(): void {

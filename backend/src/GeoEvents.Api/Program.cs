@@ -27,6 +27,7 @@ builder.Services.AddDbContext<GeoEventsDbContext>(options =>
 });
 
 // ===== Application Services =====
+builder.Services.AddSingleton<IEventBroadcaster, GeoEvents.Api.Services.SignalREventBroadcaster>();
 builder.Services.AddSingleton<IEventDispatcher, EventDispatcher>();
 builder.Services.AddSingleton<IIdempotencyStore, InMemoryIdempotencyStore>();
 
@@ -43,14 +44,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+// SignalR for real-time events
+builder.Services.AddSignalR();
+
 // CORS for frontend
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:4200")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials(); // Required for SignalR
     });
 });
 
@@ -70,6 +75,7 @@ app.UseCors();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapHub<GeoEvents.Api.Hubs.EventHub>("/hub/events");
 
 // ===== Database Migration (Development only) =====
 if (app.Environment.IsDevelopment())

@@ -3,45 +3,34 @@ export interface GeoLocation {
   lon: number;
 }
 
-export interface BaseGeoEvent<TMeta = Record<string, unknown>> {
+export interface BaseGeoEvent {
   eventId: string; // Guid string
   type: string;
   timestamp: string; // ISO8601
   source: string;
-  location?: GeoLocation;
-  metadata?: TMeta;
+  latitude: number;
+  longitude: number;
+  altitude?: number | null;
 }
 
-export interface UnitPositionMetadata {
-  speed?: number; // km/h
-  heading?: number; // degrees
-  altitude?: number; // meters
-}
-
-export interface UnitPositionEvent extends BaseGeoEvent<UnitPositionMetadata> {
+export interface UnitPositionEvent extends BaseGeoEvent {
   type: 'UNIT_POSITION';
-  location: GeoLocation;
+  headingDegrees?: number | null;
+  speedMps?: number | null; // meters per second from backend
 }
 
-export interface ZoneViolationMetadata {
-  zoneId: string;
-  zoneName?: string;
-  distanceMeters?: number; // penetration depth or proximity
-}
-
-export interface ZoneViolationEvent extends BaseGeoEvent<ZoneViolationMetadata> {
+export interface ZoneViolationEvent extends BaseGeoEvent {
   type: 'ZONE_VIOLATION';
-  location: GeoLocation;
+  zoneIdentifier: string;
+  severity: number;
+  metadata?: string | null;
 }
 
-export interface ProximityAlertMetadata {
-  otherUnitId: string;
-  separationMeters: number;
-}
-
-export interface ProximityAlertEvent extends BaseGeoEvent<ProximityAlertMetadata> {
+export interface ProximityAlertEvent extends BaseGeoEvent {
   type: 'PROXIMITY_ALERT';
-  location: GeoLocation;
+  targetIdentifier: string;
+  distanceMeters: number;
+  severity: number;
 }
 
 export type GeoEvent = UnitPositionEvent | ZoneViolationEvent | ProximityAlertEvent | BaseGeoEvent;

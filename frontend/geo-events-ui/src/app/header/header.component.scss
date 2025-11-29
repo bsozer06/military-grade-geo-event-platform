@@ -4,6 +4,7 @@
 .dot { width:10px; height:10px; border-radius:50%; background:#666; display:inline-block; }
 .dot.ok { background:#2ecc71; }
 .dot.off { background:#e67e22; }
+.warn { color:#e6b422; font-size:12px; opacity:0.9; }
 .actions { display:flex; gap:8px; }
 button { background:#1f2733; color:#e6eef8; border:1px solid #2a3240; padding:6px 10px; border-radius:4px; cursor:pointer; }
 button:hover { background:#283244; }

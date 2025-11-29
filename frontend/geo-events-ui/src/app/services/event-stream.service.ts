@@ -9,6 +9,7 @@ export class EventStreamService implements OnDestroy {
   private hub?: HubConnection;
   private events$ = new Subject<GeoEvent>();
   private connected$ = new BehaviorSubject<boolean>(false);
+  private error$ = new BehaviorSubject<string | null>(null);
 
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -27,7 +28,7 @@ export class EventStreamService implements OnDestroy {
     this.hub = new HubConnectionBuilder()
       .withUrl(url)
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Warning)
+      .configureLogging(LogLevel.Error)
       .build();
 
     this.hub.on('geo-event', (payload: GeoEvent) => {
@@ -36,16 +37,27 @@ export class EventStreamService implements OnDestroy {
     });
 
     this.hub.start()
-      .then(() => this.connected$.next(true))
-      .catch(err => console.error('SignalR connect failed', err));
+      .then(() => {
+        this.connected$.next(true);
+        this.error$.next(null);
+      })
+      .catch(err => {
+        const message = err?.message || 'SignalR negotiation failed';
+        console.warn('SignalR connect failed:', message);
+        this.connected$.next(false);
+        this.error$.next(message);
+        // Keep app running; no throw.
+      });
   }
 
   stream(): Observable<GeoEvent> { return this.events$.asObservable(); }
   connectionState(): Observable<boolean> { return this.connected$.asObservable(); }
+  connectionError(): Observable<string | null> { return this.error$.asObservable(); }
 
   ngOnDestroy(): void {
     this.hub?.stop();
     this.events$.complete();
     this.connected$.complete();
+    this.error$.complete();
   }
 }
