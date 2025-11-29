@@ -14,7 +14,7 @@ export class MockProducerService implements OnDestroy {
 
   isRunning() { return this.running$.asObservable(); }
 
-  start(periodMs = 1000) {
+  start(periodMs = 5000) {
     if (!this.isBrowser) return;
     if (this.sub) return;
     this.sub = interval(periodMs).subscribe(() => this.pushRandom());

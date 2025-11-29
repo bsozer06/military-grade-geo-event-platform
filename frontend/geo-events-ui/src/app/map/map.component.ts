@@ -4,7 +4,7 @@ import { EventStoreService } from '../services/event-store.service';
 import { GeoEvent, isUnitPosition } from '../models/geo-event';
 import { SymbolService } from '../services/symbol.service';
 import { Subscription } from 'rxjs';
-import { Viewer, Cartesian3, EntityCollection, Color, ConstantPositionProperty, ConstantProperty, VerticalOrigin, Rectangle, Camera } from 'cesium';
+import { Viewer, Cartesian3, EntityCollection, Color, ConstantPositionProperty, ConstantProperty, VerticalOrigin, Rectangle, Camera, HeadingPitchRange } from 'cesium';
 
 @Component({
   selector: 'app-map',
@@ -31,7 +31,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       return; // SSR guard
     }
     Camera.DEFAULT_VIEW_RECTANGLE = Rectangle.fromDegrees(25, 35, 45, 43); // Turkey region
-    Camera.DEFAULT_VIEW_FACTOR = 0.5;
+    Camera.DEFAULT_VIEW_FACTOR = 0.9;
     this.viewer = new Viewer(this.mapContainer.nativeElement, {
       animation: false,
       timeline: false,
@@ -76,7 +76,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
         if (!this.hasZoomed && this.viewer && this.entities && this.entities.values.length > 0) {
           this.hasZoomed = true;
-          this.viewer.flyTo(this.entities);
+          this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
         }
       } else {
         existing.position = new ConstantPositionProperty(position);
@@ -88,7 +88,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       if (this.followLatest && this.viewer) {
         const ent = this.entities?.getById(id);
         if (ent) {
-          this.viewer.flyTo(ent);
+          this.viewer.flyTo(ent, { offset: new HeadingPitchRange(0, -0.6, 150000) });
         }
       }
     }
@@ -96,7 +96,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   fitToData() {
     if (this.viewer && this.entities && this.entities.values.length > 0) {
-      this.viewer.flyTo(this.entities);
+      this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
     }
   }
 
