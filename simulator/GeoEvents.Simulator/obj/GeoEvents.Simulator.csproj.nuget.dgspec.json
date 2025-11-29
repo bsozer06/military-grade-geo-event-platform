@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj": {}
+    "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj": {}
   },
   "projects": {
-    "c:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj": {
+    "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj",
+        "projectUniqueName": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj",
         "projectName": "GeoEvents.Simulator",
-        "projectPath": "c:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj",
+        "projectPath": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj",
         "packagesPath": "C:\\Users\\Burhan\\.nuget\\packages\\",
-        "outputPath": "c:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\obj\\",
+        "outputPath": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

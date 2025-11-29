@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GeoEvents.Simulator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6366ea8169b3a04164053c074c242381dd6e75ca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aba63f231e477aeb5520331cb1edf12cdebfb0c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("GeoEvents.Simulator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GeoEvents.Simulator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
