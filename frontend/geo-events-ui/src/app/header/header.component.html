@@ -1,0 +1,11 @@
+<header class="topbar">
+  <div class="brand">Geo Events</div>
+  <div class="status">
+    <span class="dot" [class.ok]="connected()" [class.off]="!connected()"></span>
+    <span>{{ connected() ? 'Connected' : 'Offline' }}</span>
+  </div>
+  <div class="actions">
+    <button type="button" (click)="toggleMock()">{{ running() ? 'Stop' : 'Start' }} Mock</button>
+    <button type="button" (click)="clear()">Clear ({{ count() }})</button>
+  </div>
+</header>

@@ -1,0 +1,18 @@
+.map-container { width: 100%; height: 100%; }
+
+.map-overlay {
+	position: absolute;
+	z-index: 10;
+	top: 10px;
+	left: 10px;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	background: rgba(14, 17, 22, 0.7);
+	border: 1px solid #2a3240;
+	padding: 6px 8px;
+	border-radius: 6px;
+}
+.map-overlay button { background:#1f2733; color:#e6eef8; border:1px solid #2a3240; padding:6px 10px; border-radius:4px; cursor:pointer; }
+.map-overlay button:hover { background:#283244; }
+.map-overlay .toggle { color:#e6eef8; display:flex; gap:6px; align-items:center; }

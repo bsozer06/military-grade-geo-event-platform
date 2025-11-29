@@ -1,0 +1,8 @@
+<div class="map-overlay">
+	<button type="button" (click)="fitToData()">Fit to Data</button>
+	<label class="toggle">
+		<input type="checkbox" [checked]="followLatest" (change)="toggleFollow($any($event.target).checked)"/>
+		Follow latest
+	</label>
+</div>
+<div #mapContainer class="map-container"></div>

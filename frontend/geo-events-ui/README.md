@@ -57,3 +57,33 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Real-time Event Stream Configuration
+
+The app attempts to connect to a SignalR hub at `http://localhost:5000/hub/events` on the browser. Override this by defining a global before Angular bootstraps (e.g. in `index.html`):
+
+```html
+<script>window.__GEO_EVENTS_SIGNALR_URL__ = 'https://your-host/hub/events';</script>
+```
+
+## Cesium Setup
+
+Cesium assets are copied to `assets/cesium`. If you change output paths adjust `angular.json` assets section accordingly. Import of widgets CSS is done in `src/styles.scss`.
+
+## Military Symbols (milsymbol)
+
+`SymbolService` provides a simple wrapper with caching. Example usage:
+
+```ts
+const imgDataUrl = symbolService.buildSymbol('SFGPUCI----K', { size: 48, uniqueDesignation: 'UNIT-01' });
+```
+
+## Development Quick Start
+
+```bash
+cd frontend/geo-events-ui
+npm install
+npm start # alias for ng serve (if script added) else ng serve
+```
+
+Then publish a `UNIT_POSITION` event from the backend simulator to see real-time updates on the map.
