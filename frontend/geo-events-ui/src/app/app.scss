@@ -7,5 +7,6 @@ html, body { height: 100%; margin: 0; overflow: hidden; }
 	height: 100%;
 	min-height: 0;
 }
-.map-pane { border-right: 1px solid #222; min-height:0; }
+.map-pane { border-right: 1px solid #222; min-height:0; position: relative; display: flex; }
+.map-pane app-map { flex: 1 1 auto; min-height: 0; min-width: 0; }
 .stream-pane { background: #0e1116; color: #e6eef8; min-height:0; }

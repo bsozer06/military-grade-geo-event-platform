@@ -1,19 +1,25 @@
 <div class="stream">
   <div class="controls">
-    <label><input type="checkbox" [checked]="showUnit()" (change)="showUnit.set($any($event.target).checked)"/> UNIT_POSITION</label>
-    <label><input type="checkbox" [checked]="showZone()" (change)="showZone.set($any($event.target).checked)"/> ZONE_VIOLATION</label>
-    <label><input type="checkbox" [checked]="showProx()" (change)="showProx.set($any($event.target).checked)"/> PROXIMITY_ALERT</label>
-    <button type="button" (click)="addMock()">Add mock event</button>
-    <button type="button" (click)="clear()">Clear</button>
+    <div class="filters">
+      <label><input type="checkbox" [checked]="showUnit()" (change)="showUnit.set($any($event.target).checked)"/> UNIT_POSITION</label>
+      <label><input type="checkbox" [checked]="showZone()" (change)="showZone.set($any($event.target).checked)"/> ZONE_VIOLATION</label>
+      <label><input type="checkbox" [checked]="showProx()" (change)="showProx.set($any($event.target).checked)"/> PROXIMITY_ALERT</label>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="addMock()">Add mock</button>
+      <button type="button" (click)="clear()">Clear</button>
+    </div>
   </div>
 
   <ul class="events">
     <li *ngFor="let e of events()">
-      <div class="time">{{ e.timestamp | date:'medium' }}</div>
-      <div class="type">{{ e.type }}</div>
-      <div class="src">{{ e.source }}</div>
-      <div class="loc" *ngIf="e.latitude">{{ e.latitude | number:'1.4-4' }}, {{ e.longitude | number:'1.4-4' }}</div>
-      <pre class="meta">{{ e| json }}</pre>
+      <div class="time">{{ e.timestamp | date:'short' }}</div>
+      <div class="type">
+        <span class="badge" [class.badge-unit]="e.type==='UNIT_POSITION'" [class.badge-zone]="e.type==='ZONE_VIOLATION'" [class.badge-prox]="e.type==='PROXIMITY_ALERT'">{{ e.type }}</span>
+      </div>
+      <div class="src" [title]="e.source">{{ e.source }}</div>
+      <div class="loc" *ngIf="latOf(e) !== null">{{ latOf(e)! | number:'1.4-4' }}, {{ lonOf(e)! | number:'1.4-4' }}</div>
+      <div class="details">{{ detailsOf(e) }}</div>
     </li>
   </ul>
 </div>
