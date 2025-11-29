@@ -118,74 +118,74 @@ npm test
 ## 📂 Project Structure
 
 ```
-military-grade-geo-event-platform/
-├── backend/
-│   ├── src/
-│   │   ├── GeoEvents.Domain/          # Entities, value objects, domain logic
-│   │   ├── GeoEvents.Application/     # Use cases, DTOs, interfaces
-│   │   ├── GeoEvents.Infrastructure/  # RabbitMQ, EF Core, external services
-│   │   └── GeoEvents.Api/             # Controllers, minimal APIs, SignalR hubs
-│   ├── tests/
-│   │   ├── GeoEvents.Domain.Tests/
-│   │   ├── GeoEvents.Application.Tests/
-│   │   └── GeoEvents.Integration.Tests/
-│   └── GeoEvents.sln
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── map/                   # Cesium components
-│   │   │   ├── event-stream/          # Live event timeline
-│   │   │   └── services/              # API and WebSocket services
-│   │   └── environments/
-│   └── package.json
-├── simulator/
-│   ├── Scenarios/                     # Event generation configs
-│   ├── Publishers/                    # RabbitMQ publishers
-│   └── Program.cs
-├── docs/
-│   ├── architecture.md                # Detailed architecture decisions
-│   ├── event-model.md                 # Event schemas and routing keys
-│   ├── security-considerations.md     # Auth, validation, RBAC concepts
-│   └── scaling-strategy.md            # Performance and scaling patterns
-├── docker-compose.yml
-└── README.md
+# Military-Grade Geo Event Platform
+
+A real-time, message-driven geospatial event processing demo platform. Backend: ASP.NET Core + RabbitMQ + Postgres/PostGIS. Frontend (planned): Angular + Cesium. Includes a simulator to generate realistic events and a rules engine for spatial checks.
+
+## Quick Start
+
+### Prerequisites
+- .NET SDK 9.x
+- Docker Desktop
+- Windows PowerShell 5.1
+
+### Bring up infrastructure
+```powershell
+Push-Location "C:\_burhan\_projects\military-grade-geo-event-platform"
+docker compose up -d
+```
+- Postgres: `localhost:5433`
+- RabbitMQ: `localhost:5672`, UI `http://localhost:15672` (user `geouser`, pass `geopass123`)
+
+### Run the API
+```powershell
+Push-Location "C:\_burhan\_projects\military-grade-geo-event-platform\backend\src\GeoEvents.Api"
+dotnet run
+```
+- Swagger: `http://localhost:5045/swagger`
+
+### Run the Simulator
+```powershell
+Push-Location "C:\_burhan\_projects\military-grade-geo-event-platform\simulator"
+dotnet run -- --units 10 --rate 5 --duration 120 --metrics true --metricsPort 9090
+Start-Process http://localhost:9090/dashboard
 ```
 
-## 🎮 Event Schema
+## Architecture
+- Clean Architecture: Domain → Application → Infrastructure → API
+- Messaging: RabbitMQ topic exchange `geo.events`, routing key `geo.unit.position`
+- Persistence: Postgres + PostGIS (SRID 4326), EF Core + NetTopologySuite
+- Rules Engine: pluggable `ISpatialRule` implementations (zone violation, proximity, etc.)
 
-All events follow this standard schema:
+## Project Structure
+- `backend/src/GeoEvents.Domain` — entities (Unit, Zone, GeoEvent), value objects (GeoCoordinate, Heading, Velocity)
+- `backend/src/GeoEvents.Application` — DTOs, mapping, event dispatcher, spatial rules
+- `backend/src/GeoEvents.Infrastructure` — RabbitMQ publisher/consumer, DbContext, repositories, idempotency store
+- `backend/src/GeoEvents.Api` — DI, controllers (Health, Units, Zones, Events), OpenAPI
+- `simulator/` — .NET 9 console app: scenarios, Rabbit publisher, metrics server
+- `docs/` — architecture, backend overview, simulator overview, getting started
 
-```json
-{
-  "eventId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "type": "UNIT_POSITION",
-  "timestamp": "2025-11-28T12:00:00Z",
-  "source": "unit-alpha-1",
-  "location": {
-    "lat": 41.0082,
-    "lon": 28.9784
-  },
-  "metadata": {
-    "speed": 45.5,
-    "heading": 120,
-    "altitude": 150
-  }
-}
-```
+## Observability
+- Simulator metrics: `http://localhost:9090/{health|metrics|dashboard}`
+- RabbitMQ UI: `http://localhost:15672`
+- API logs show consumer activity and rule evaluations
 
-### Event Types
+## Configuration
+- API connection string: `Host=localhost;Port=5433;Database=geoevents;Username=geouser;Password=geopass123`
+- RabbitMQ: `Host=localhost;Port=5672;Username=geouser;Password=geopass123;Exchange=geo.events`
+- Simulator CLI flags: `--units`, `--rate`, `--duration`, `--speed`, `--heading`, `--lat`, `--lon`, `--seed`, `--metrics`, `--metricsPort`
 
-- `UNIT_POSITION`: Unit location update
-- `ZONE_VIOLATION`: Unit entered restricted zone
-- `PROXIMITY_ALERT`: Units within critical distance
-- `SENSOR_DETECTION`: Sensor activity detected
+## Security & Portfolio Safety
+- No real operational data; deterministic, synthetic scenarios
+- Input validation, idempotency, message size limits
+- Credentials configurable via environment variables; no secrets committed
 
-### Routing Keys
+## Next Steps
+- Frontend (Angular + Cesium) to visualize live positions and events
+- Additional simulator modes: `burst`, `replay`
+- Prometheus-style metrics and dashboards
 
-- `geo.unit.position` - Position updates
-- `geo.zone.violation` - Zone breach events
-- `geo.sensor.alert` - Sensor-triggered events
-- `geo.proximity.warning` - Proximity alerts
+More details in `docs/architecture.md`, `docs/backend-overview.md`, `docs/simulator-overview.md`, and `docs/getting-started.md`.
 
 ## 🧪 Testing
 

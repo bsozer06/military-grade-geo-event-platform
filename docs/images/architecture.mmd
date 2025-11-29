@@ -1,0 +1,33 @@
+flowchart TB
+  subgraph Simulator [.NET 9 Console]
+    S[ConvoyMovingScenario]
+    SP[RabbitPublisher]
+    S-->SP
+  end
+
+  subgraph RabbitMQ [RabbitMQ Topic Exchange]
+    EX[geo.events]
+  end
+
+  subgraph API [ASP.NET Core API]
+    C[RabbitMqConsumer]
+    ED[EventDispatcher]
+    SR[SpatialRules]
+    RPO[Repositories]
+    HC[Health/Controllers]
+    C-->ED-->SR
+    C-->RPO
+  end
+
+  subgraph Postgres [Postgres + PostGIS]
+    DB[(GeoEventsDb)]
+  end
+
+  SP-- geo.unit.position -->EX
+  EX-- delivers -->C
+  RPO-- EF Core -->DB
+
+  style Simulator fill:#e0f2fe,stroke:#0284c7,stroke-width:1px
+  style RabbitMQ fill:#fde68a,stroke:#d97706,stroke-width:1px
+  style API fill:#dcfce7,stroke:#16a34a,stroke-width:1px
+  style Postgres fill:#fee2e2,stroke:#dc2626,stroke-width:1px
