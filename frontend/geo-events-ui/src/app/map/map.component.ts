@@ -4,7 +4,7 @@ import { EventStoreService } from '../services/event-store.service';
 import { GeoEvent, isUnitPosition } from '../models/geo-event';
 import { SymbolService } from '../services/symbol.service';
 import { Subscription } from 'rxjs';
-import { Viewer, Cartesian3, EntityCollection, Color, ConstantPositionProperty, ConstantProperty, VerticalOrigin, Rectangle, Camera, HeadingPitchRange, PolylineDashMaterialProperty } from 'cesium';
+import { Viewer, Cartesian3, EntityCollection, Color, ConstantPositionProperty, ConstantProperty, VerticalOrigin, Rectangle, Camera, HeadingPitchRange, PolylineDashMaterialProperty, PolylineArrowMaterialProperty } from 'cesium';
 import { ZonesService } from '../services/zones.service';
 
 @Component({
@@ -25,6 +25,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private lastEventId?: string;
   private hasZoomed = false;
   private unitPositions = new Map<string, { lat: number; lon: number }>();
+  showArrows = true;
+  private arrowIds = new Set<string>();
   private onResize = () => {
     try { this.viewer?.resize?.(); this.viewer?.scene?.requestRender?.(); } catch { /* noop */ }
   };
@@ -55,7 +57,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.viewer = new Viewer(el, {
       animation: false,
       timeline: false,
-      sceneModePicker: false,
+      sceneModePicker: true,
       baseLayerPicker: true, // OK once CESIUM_BASE_URL is set
       geocoder: false,
       navigationHelpButton: true
@@ -99,6 +101,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.sub = this.store.filtered$.subscribe(list => {
       // Process newest event (first in array)
       const e = list[0];
+      if (this.entities && list.length === 0) {
+        try { this.entities.removeAll(); this.viewer?.scene?.requestRender?.(); } catch {}
+      }
       if (!e || e.eventId === this.lastEventId) return;
       this.lastEventId = e.eventId;
       this.onEvent(e);
@@ -118,10 +123,42 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (isUnitPosition(e)) {
       const id = e.source;
       const heading = e.headingDegrees;
+      const prev = this.unitPositions.get(id);
       const existing = this.entities?.getById(id);
       const img = this.symbols.buildSymbol(this.SIDC.unit, { size: 42, uniqueDesignation: id });
-      // Track last known unit position for proximity geometry
-      this.unitPositions.set(id, { lat, lon });
+      // Draw movement arrow from previous to current, if available
+      if (prev) {
+        const metersPerDegLat = 111320;
+        const metersPerDegLon = 111320 * Math.cos((lat * Math.PI) / 180);
+        const dLat = (lat - prev.lat) * metersPerDegLat;
+        const dLon = (lon - prev.lon) * metersPerDegLon;
+        const dist = Math.hypot(dLat, dLon);
+        if (dist >= 3) {
+          const arrowId = `move-${id}-arrow`;
+          const arrow = this.entities?.getById(arrowId);
+          const positions = [
+            Cartesian3.fromDegrees(prev.lon, prev.lat),
+            Cartesian3.fromDegrees(lon, lat)
+          ];
+          if (!arrow) {
+            this.entities?.add({
+              id: arrowId,
+              polyline: {
+                positions,
+                width: 4,
+                material: new PolylineArrowMaterialProperty(Color.YELLOW.withAlpha(0.9))
+              },
+              show: this.showArrows
+            });
+            this.arrowIds.add(arrowId);
+          } else if (arrow.polyline) {
+            arrow.polyline.positions = positions as any;
+            arrow.polyline.width = 4 as any;
+            arrow.polyline.material = new PolylineArrowMaterialProperty(Color.YELLOW.withAlpha(0.9)) as any;
+            arrow.show = this.showArrows;
+          }
+        }
+      }
 
       if (!existing) {
         this.entities?.add({
@@ -140,7 +177,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
         if (!this.hasZoomed && this.viewer && this.entities && this.entities.values.length > 0) {
           this.hasZoomed = true;
-          this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
+          // Closer initial fit for better live visibility
+          this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.85, 120000), duration: 0.8 });
         }
       } else {
         if (existing.position instanceof ConstantPositionProperty) {
@@ -156,9 +194,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       if (this.followLatest && this.viewer) {
         const ent = this.entities?.getById(id);
         if (ent) {
-          this.viewer.flyTo(ent, { offset: new HeadingPitchRange(0, -0.6, 150000) });
+          // Tighter follow camera for close-up tracking
+          this.viewer.flyTo(ent, { offset: new HeadingPitchRange(0, -0.9, 60000), duration: 0.6 });
         }
       }
+      // Track last known unit position for proximity geometry and movement arrows
+      this.unitPositions.set(id, { lat, lon });
       return;
     }
 
@@ -307,13 +348,23 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   fitToData() {
     if (this.viewer && this.entities && this.entities.values.length > 0) {
-      this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 300000) });
+      this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 100000) });
     }
   }
 
   toggleFollow(on: boolean) {
     this.followLatest = on;
   }
+
+  toggleArrows(on: boolean) {
+    this.showArrows = on;
+    this.arrowIds.forEach(id => {
+      const ent = this.entities?.getById(id);
+      if (ent) ent.show = on;
+    });
+  }
+
+  // Using Cesium's built-in Scene Mode Picker for 2D/3D toggle
 
   zoomIn() {
     const camera = this.viewer?.camera;

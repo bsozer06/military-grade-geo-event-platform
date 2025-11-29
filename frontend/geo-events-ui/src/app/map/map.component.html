@@ -8,5 +8,9 @@
 		<input type="checkbox" [checked]="followLatest" (change)="toggleFollow($any($event.target).checked)"/>
 		Follow latest
 	</label>
+	<label class="toggle">
+		<input type="checkbox" [checked]="showArrows" (change)="toggleArrows($any($event.target).checked)"/>
+		Movement arrows
+	</label>
 </div>
 <div #mapContainer class="map-container"></div>

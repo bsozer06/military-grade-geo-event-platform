@@ -1,6 +1,14 @@
 .stream { display: flex; flex-direction: column; height: 100%; min-height: 0; position: relative; }
 .controls { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid #2a3240; background: rgba(14,17,22,0.85); backdrop-filter: blur(4px); }
 .controls .filters { display: flex; gap: 12px; flex-wrap: wrap; }
+.toggle-pill { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid #2a3240; cursor:pointer; user-select:none; }
+.toggle-pill input { appearance: none; -webkit-appearance: none; width:16px; height:16px; border:1px solid #2a3240; border-radius:3px; display:inline-block; position:relative; background:#12161d; }
+.toggle-pill input:checked { background:#1f2733; border-color:#3a4456; }
+.toggle-pill input:checked::after { content:""; position:absolute; left:3px; top:3px; width:8px; height:8px; background:#e6c84f; border-radius:2px; }
+.toggle-pill span { font-weight:600; letter-spacing:0.2px; }
+.toggle-pill.unit { color:#6ec1ff; background: rgba(110,193,255,0.10); border-color: rgba(110,193,255,0.35); }
+.toggle-pill.zone { color:#ffb066; background: rgba(255,176,102,0.10); border-color: rgba(255,176,102,0.35); }
+.toggle-pill.prox { color:#ff6b6b; background: rgba(255,107,107,0.10); border-color: rgba(255,107,107,0.35); }
 .controls .actions { display: flex; gap: 8px; }
 .controls button { background:#1f2733; color:#e6eef8; border:1px solid #2a3240; padding:6px 10px; border-radius:4px; cursor:pointer; }
 .controls button:hover { background:#283244; }

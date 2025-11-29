@@ -7,8 +7,8 @@ sealed record SimulatorConfig
     public double OriginLat { get; init; } = 41.10;
     public double OriginLon { get; init; } = 29.00;
     public string ApiBaseUrl { get; init; } = "http://localhost:5045/";
-    public double MinSpeedMps { get; init; } = 2;
-    public double MaxSpeedMps { get; init; } = 15;
+    public double MinSpeedMps { get; init; } = 100;
+    public double MaxSpeedMps { get; init; } = 250;
     public bool EmitZoneViolations { get; init; } = false;
     public string ZoneId { get; init; } = "zone-alpha";
     public double ZoneCenterLat { get; init; } = 41.105;
@@ -17,7 +17,7 @@ sealed record SimulatorConfig
     public string? ScenarioPath { get; init; }
     public int MetricsPort { get; init; } = 9091;
     public bool EmitProximityAlerts { get; init; } = false;
-    public double ProximityThresholdMeters { get; init; } = 100;
+    public double ProximityThresholdMeters { get; init; } = 200;
     public int ProximityRepeatSeconds { get; init; } = 5;
 
     public static SimulatorConfig Parse(string[] args)

@@ -1,9 +1,18 @@
 <div class="stream">
   <div class="controls">
     <div class="filters">
-      <label><input type="checkbox" [checked]="showUnit()" (change)="showUnit.set($any($event.target).checked)"/> UNIT_POSITION</label>
-      <label><input type="checkbox" [checked]="showZone()" (change)="showZone.set($any($event.target).checked)"/> ZONE_VIOLATION</label>
-      <label><input type="checkbox" [checked]="showProx()" (change)="showProx.set($any($event.target).checked)"/> PROXIMITY_ALERT</label>
+      <label class="toggle-pill unit">
+        <input type="checkbox" [checked]="showUnit()" (change)="showUnit.set($any($event.target).checked)"/>
+        <span>UNIT_POSITION</span>
+      </label>
+      <label class="toggle-pill zone">
+        <input type="checkbox" [checked]="showZone()" (change)="showZone.set($any($event.target).checked)"/>
+        <span>ZONE_VIOLATION</span>
+      </label>
+      <label class="toggle-pill prox">
+        <input type="checkbox" [checked]="showProx()" (change)="showProx.set($any($event.target).checked)"/>
+        <span>PROXIMITY_ALERT</span>
+      </label>
     </div>
     <div class="actions">
       <button type="button" (click)="addMock()">Add mock</button>
