@@ -63,15 +63,19 @@ export class EventStreamComponent {
       return `heading:${h ?? '-'} speed:${s ?? '-'}`;
     }
     if (e?.type === 'ZONE_VIOLATION') {
-      const z = e.zoneIdentifier || e.metadata?.zoneId || e.metadata?.zoneName;
+      // Simulator sends: ZoneId (top-level), Metadata.radiusMeters/centerLat/centerLon
+      const z = e.zoneId ?? e.zoneIdentifier ?? e.metadata?.zoneId ?? e.metadata?.zoneName;
       const sev = e.severity ?? '-';
-      const r = e.radiusMeters ?? e.metadata?.distanceMeters;
+      const r = e.radiusMeters ?? e.metadata?.radiusMeters ?? e.metadata?.distanceMeters;
+      console.log('ZONE_VIOLATION details:', { z, sev, r });
       return `zone:${z ?? '-'} sev:${sev} r:${r ?? '-'}m`;
     }
     if (e?.type === 'PROXIMITY_ALERT') {
-      const t = e.targetIdentifier ?? e.metadata?.otherUnitId;
+      // Simulator sends: OtherUnit (top-level), DistanceMeters (top-level)
+      const t = e.otherUnit ?? e.targetIdentifier ?? e.metadata?.otherUnitId;
       const d = e.distanceMeters ?? e.metadata?.separationMeters;
       const sev = e.severity ?? '-';
+      console.log('PROXIMITY_ALERT details:', { t, d, sev });
       return `target:${t ?? '-'} d:${d ?? '-'}m sev:${sev}`;
     }
     return '';

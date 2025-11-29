@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GeoEvents.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a6ba2686af3246a29164e8daca614d4bb8a5e85")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c966a75fd4ebb1dd50a2daf10e61bd1b37b8403b")]
 [assembly: System.Reflection.AssemblyProductAttribute("GeoEvents.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GeoEvents.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

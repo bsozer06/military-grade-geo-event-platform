@@ -19,20 +19,51 @@ sealed record SimulatorConfig
     public bool EmitProximityAlerts { get; init; } = false;
     public double ProximityThresholdMeters { get; init; } = 200;
     public int ProximityRepeatSeconds { get; init; } = 5;
+    public bool SpawnUnitsInZone { get; init; } = false;
 
     public static SimulatorConfig Parse(string[] args)
     {
         var cfg = new SimulatorConfig();
-        foreach (var arg in args)
+        // Support both key=value and --key value forms; map 'rate' (Hz) to interval
+        for (int idx = 0; idx < args.Length; idx++)
         {
-            var parts = arg.Split('=', 2, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length != 2) continue;
-            var k = parts[0].Trim().ToLowerInvariant();
-            var v = parts[1].Trim();
-            switch (k)
+            var raw = args[idx];
+            if (string.IsNullOrWhiteSpace(raw)) continue;
+
+            string key;
+            string? val = null;
+
+            var eq = raw.IndexOf('=');
+            if (eq > 0)
+            {
+                key = raw.Substring(0, eq);
+                val = raw.Substring(eq + 1);
+            }
+            else
+            {
+                key = raw;
+                if (idx + 1 < args.Length && !args[idx + 1].Contains('='))
+                {
+                    val = args[idx + 1];
+                    idx++; // consume value
+                }
+            }
+
+            key = key.Trim().TrimStart('-').TrimStart('-').ToLowerInvariant();
+            if (string.IsNullOrEmpty(key) || val is null) continue;
+            var v = val.Trim();
+
+            switch (key)
             {
                 case "units": if (int.TryParse(v, out var u)) cfg = cfg with { UnitCount = u }; break;
                 case "interval": if (int.TryParse(v, out var i)) cfg = cfg with { IntervalMs = i }; break;
+                case "rate":
+                    if (double.TryParse(v, out var hz) && hz > 0)
+                    {
+                        var ms = (int)Math.Round(1000.0 / hz);
+                        cfg = cfg with { IntervalMs = ms };
+                    }
+                    break;
                 case "duration": if (int.TryParse(v, out var d)) cfg = cfg with { DurationSeconds = d }; break;
                 case "seed": if (int.TryParse(v, out var s)) cfg = cfg with { Seed = s }; break;
                 case "originlat": if (double.TryParse(v, out var olat)) cfg = cfg with { OriginLat = olat }; break;
@@ -50,6 +81,11 @@ sealed record SimulatorConfig
                 case "emitproximity": if (bool.TryParse(v, out var ep)) cfg = cfg with { EmitProximityAlerts = ep }; break;
                 case "proxthreshold": if (double.TryParse(v, out var pt)) cfg = cfg with { ProximityThresholdMeters = pt }; break;
                 case "proxrepeat": if (int.TryParse(v, out var prs)) cfg = cfg with { ProximityRepeatSeconds = prs }; break;
+                case "all":
+                    if (bool.TryParse(v, out var all) && all)
+                        cfg = cfg with { EmitZoneViolations = true, EmitProximityAlerts = true };
+                    break;
+                case "spawninzone": if (bool.TryParse(v, out var sz)) cfg = cfg with { SpawnUnitsInZone = sz }; break;
             }
         }
         return cfg;

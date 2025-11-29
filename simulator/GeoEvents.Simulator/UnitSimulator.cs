@@ -29,6 +29,7 @@ class UnitSimulator
         while (!cancellationToken.IsCancellationRequested && (DateTimeOffset.UtcNow - start).TotalSeconds < _config.DurationSeconds)
         {
             var loopStart = DateTimeOffset.UtcNow;
+            Console.WriteLine($"EmitZoneViolations: {_config.EmitZoneViolations}, EmitProximityAlerts: {_config.EmitProximityAlerts}");
             await SendUnitEventsAsync(cancellationToken);
             if (_config.EmitZoneViolations)
                 await EmitZoneViolationsAsync(cancellationToken);
@@ -36,7 +37,7 @@ class UnitSimulator
                 await EmitProximityAlertsAsync(cancellationToken);
             if (DateTimeOffset.UtcNow >= nextPrint)
             {
-                Console.WriteLine($"Progress: sent={TotalSent} elapsed={(DateTimeOffset.UtcNow-start).TotalSeconds:F1}s");
+                // Console.WriteLine($"Progress: sent={TotalSent} elapsed={(DateTimeOffset.UtcNow-start).TotalSeconds:F1}s");
                 nextPrint = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(5);
             }
             var elapsed = (DateTimeOffset.UtcNow - loopStart).TotalMilliseconds;
@@ -79,6 +80,26 @@ class UnitSimulator
                 Lon: u.Lon,
                 HeadingDeg: u.HeadingDeg ?? _rng.Next(0,360))).ToArray();
         }
+        if (_config.EmitZoneViolations && _config.SpawnUnitsInZone)
+        {
+            var list = new List<UnitState>();
+            for (int i = 0; i < _config.UnitCount; i++)
+            {
+                var id = $"unit-{i+1:D2}";
+                var heading = _rng.Next(0,360);
+                var r = _rng.NextDouble() * _config.ZoneRadiusMeters * 0.8;
+                var theta = _rng.NextDouble() * Math.PI * 2;
+                var metersPerDegLat = 111320.0;
+                var metersPerDegLon = 111320.0 * Math.Cos(_config.ZoneCenterLat * Math.PI / 180.0);
+                var dLat = (Math.Sin(theta) * r) / metersPerDegLat;
+                var dLon = (Math.Cos(theta) * r) / metersPerDegLon;
+                var lat = _config.ZoneCenterLat + dLat;
+                var lon = _config.ZoneCenterLon + dLon;
+                list.Add(new UnitState(id, lat, lon, heading));
+            }
+            Console.WriteLine($"Spawned {list.Count} units inside zone radius {_config.ZoneRadiusMeters}m (center {_config.ZoneCenterLat},{_config.ZoneCenterLon})");
+            return list.ToArray();
+        }
         return Enumerable.Range(0, _config.UnitCount)
             .Select(i => new UnitState(
                 Identifier: $"unit-{i+1:D2}",
@@ -119,7 +140,11 @@ class UnitSimulator
     {
         for (int i = 0; i < _units.Length; i++)
         {
-            if (IsInsideZone(_units[i].Lat, _units[i].Lon))
+            var isInside = IsInsideZone(_units[i].Lat, _units[i].Lon);
+            Console.WriteLine(isInside
+                ? $"Unit {_units[i].Identifier} is INSIDE zone {_config.ZoneId}"
+                : $"Unit {_units[i].Identifier} is outside zone {_config.ZoneId}");
+            if (isInside)
             {
                 var violation = new ZoneViolationEventDto(
                     EventId: Guid.NewGuid(), Type: "ZONE_VIOLATION", Timestamp: DateTimeOffset.UtcNow,
@@ -158,6 +183,7 @@ class UnitSimulator
             {
                 var a = _units[i]; var b = _units[j];
                 var distance = HaversineMeters(a.Lat, a.Lon, b.Lat, b.Lon);
+                Console.WriteLine($"Distance between {a.Identifier} and {b.Identifier}: {distance} meters");
                 if (distance <= _config.ProximityThresholdMeters)
                 {
                     var key = a.Identifier.CompareTo(b.Identifier) < 0 ? $"{a.Identifier}|{b.Identifier}" : $"{b.Identifier}|{a.Identifier}";
@@ -198,6 +224,7 @@ class UnitSimulator
         var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
         const double earthRadiusMeters = 6371000;
         var distance = earthRadiusMeters * c;
+        Console.WriteLine($"Distance to zone center: {distance:F2}m (radius {_config.ZoneRadiusMeters}m)");
         return distance <= _config.ZoneRadiusMeters;
     }
 

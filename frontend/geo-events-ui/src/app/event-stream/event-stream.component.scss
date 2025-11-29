@@ -26,3 +26,9 @@
 .badge-unit { color:#6ec1ff; background: rgba(110,193,255,0.12); border-color: rgba(110,193,255,0.35); }
 .badge-zone { color:#ffb066; background: rgba(255,176,102,0.12); border-color: rgba(255,176,102,0.35); }
 .badge-prox { color:#ff6b6b; background: rgba(255,107,107,0.12); border-color: rgba(255,107,107,0.35); }
+
+/* Small per-type icon before text */
+.badge .icon { display:inline-block; width: 12px; height: 12px; line-height: 12px; text-align: center; font-size: 11px; margin-right: 6px; transform: translateY(-1px); }
+.badge .icon.i-unit::before { content: '▲'; }
+.badge .icon.i-zone::before { content: '⭕'; }
+.badge .icon.i-prox::before { content: '⚠'; }

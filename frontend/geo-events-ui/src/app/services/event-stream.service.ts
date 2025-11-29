@@ -31,15 +31,23 @@ export class EventStreamService implements OnDestroy {
       .configureLogging(LogLevel.Error)
       .build();
 
-    this.hub.on('geo-event', (payload: GeoEvent) => {
-      // Basic shape trust; production should validate schema
-      this.events$.next(payload);
+    this.hub.on('geo-event', (payload: any) => {
+      // Normalize and forward; production should validate schema strictly
+      try {
+        console.log('[EventStreamService] received from hub:', payload?.type, payload);
+      } catch {}
+      const e = this.normalizeEvent(payload);
+      try {
+        console.log('[EventStreamService] normalized event:', e?.type, e);
+      } catch {}
+      this.events$.next(e as any);
     });
 
     this.hub.start()
       .then(() => {
         this.connected$.next(true);
         this.error$.next(null);
+        try { console.log('[EventStreamService] SignalR connected'); } catch {}
       })
       .catch(err => {
         const message = err?.message || 'SignalR negotiation failed';
@@ -53,6 +61,24 @@ export class EventStreamService implements OnDestroy {
   stream(): Observable<GeoEvent> { return this.events$.asObservable(); }
   connectionState(): Observable<boolean> { return this.connected$.asObservable(); }
   connectionError(): Observable<string | null> { return this.error$.asObservable(); }
+
+  private normalizeEvent(e: any): any {
+    if (!e || typeof e !== 'object') return e;
+    // Normalize type to uppercase
+    if (e.type && typeof e.type === 'string') e.type = e.type.toUpperCase();
+    // Prefer top-level lat/lon when location is provided
+    if ((e.location && e.location.lat !== undefined) && e.latitude === undefined) e.latitude = e.location.lat;
+    if ((e.location && e.location.lon !== undefined) && e.longitude === undefined) e.longitude = e.location.lon;
+    // ZoneViolation: ensure zoneIdentifier present
+    if (e.type === 'ZONE_VIOLATION') {
+      if (!e.zoneIdentifier && e.zoneId) e.zoneIdentifier = e.zoneId;
+    }
+    // ProximityAlert: ensure targetIdentifier present
+    if (e.type === 'PROXIMITY_ALERT') {
+      if (!e.targetIdentifier && e.otherUnit) e.targetIdentifier = e.otherUnit;
+    }
+    return e;
+  }
 
   ngOnDestroy(): void {
     this.hub?.stop();

@@ -25,16 +25,19 @@ export class EventStoreService implements OnDestroy {
     const next = new Set(this.filterSubject.value);
     if (enabled) next.add(type); else next.delete(type);
     this.filterSubject.next(next);
+    try { console.log('[EventStoreService] filter set:', type, enabled); } catch {}
   }
 
   push(e: GeoEvent) {
+    try { console.log('[EventStoreService] push event:', e.type, e.eventId, e); } catch {}
     const current = this.eventsSubject.value;
     const next = [e, ...current];
     if (next.length > this.maxBuffer) next.length = this.maxBuffer;
     this.eventsSubject.next(next);
+    try { console.log('[EventStoreService] buffer size:', next.length); } catch {}
   }
 
-  clear() { this.eventsSubject.next([]); }
+  clear() { try { console.log('[EventStoreService] clear called'); } catch {} this.eventsSubject.next([]); }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();

@@ -21,6 +21,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private entities?: EntityCollection;
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   followLatest = false;
+  private followPauseUntil?: number;
 
   private lastEventId?: string;
   private hasZoomed = false;
@@ -75,23 +76,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Load persistent zones from mock data and render as polygons (circle approximation)
     this.zones.getZones().subscribe(zs => {
+      console.log('MapComponent: received zones for rendering:', zs);
       zs.forEach((z: any) => {
-        const id = z.id || z.zoneId || `zone-${Math.random().toString(36).slice(2)}`;
+        const id = z.zoneId || z.id || `zone-${Math.random().toString(36).slice(2)}`;
         const lat = z.centerLat;
         const lon = z.centerLon;
         const radius = z.radiusMeters;
-        if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(radius)) return;
+        if (!Number.isFinite(lat) || !Number.isFinite(lon) || !Number.isFinite(radius)) {
+          console.warn('MapComponent: skipping zone with invalid coords/radius:', z);
+          return;
+        }
         const positions = this.buildCirclePositions(lat, lon, radius);
         if (!this.entities?.getById(id)) {
+          console.log('MapComponent: adding persistent zone:', id, 'at', lat, lon, 'radius', radius);
           this.entities?.add({
             id,
             polygon: {
               hierarchy: positions,
-              material: Color.CYAN.withAlpha(0.08),
+              material: Color.CYAN.withAlpha(0.2),
               outline: true,
-              outlineColor: Color.CYAN
+              outlineColor: Color.CYAN,
+              outlineWidth: 2
             } as any,
-            label: { text: new ConstantProperty(z.name || id), font: '12px sans-serif', fillColor: Color.WHITE }
+            label: { text: new ConstantProperty(z.name || id), font: '14px sans-serif', fillColor: Color.CYAN, outlineColor: Color.BLACK, outlineWidth: 2 }
           });
         }
       });
@@ -125,7 +132,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       const heading = e.headingDegrees;
       const prev = this.unitPositions.get(id);
       const existing = this.entities?.getById(id);
-      const img = this.symbols.buildSymbol(this.SIDC.unit, { size: 42, uniqueDesignation: id });
+      const img = this.symbols.buildSymbol(this.SIDC.unit, { size: 28, uniqueDesignation: id });
       // Draw movement arrow from previous to current, if available
       if (prev) {
         const metersPerDegLat = 111320;
@@ -191,7 +198,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         }
       }
 
-      if (this.followLatest && this.viewer) {
+      const now = Date.now();
+      const followAllowed = this.followLatest && (!this.followPauseUntil || now > this.followPauseUntil);
+      if (followAllowed && this.viewer) {
         const ent = this.entities?.getById(id);
         if (ent) {
           // Tighter follow camera for close-up tracking
@@ -205,20 +214,26 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Zone violation: draw polygon (circle approximation) with optional label (no milsymbol to avoid unknown icon)
     if ((e as any).type === 'ZONE_VIOLATION') {
-      const zid = `zone-${e.source}-${(e as any).zoneIdentifier}`;
+      const zidRaw = (e as any).zoneIdentifier ?? (e as any).zoneId ?? (e as any).zoneID;
+      const zid = `zone-${e.source}-${zidRaw ?? 'unknown'}`;
       const existing = this.entities?.getById(zid);
-      const labelText = `${(e as any).zoneIdentifier} sev:${(e as any).severity}`;
-      const radius = (e as any).radiusMeters as number | undefined;
+      const labelText = `${zidRaw ?? ''} sev:${(e as any).severity ?? ''}`.trim();
+      let radius = (e as any).radiusMeters as number | undefined;
       if (!existing) {
         const zoneEntity: any = { id: zid };
-        if (radius) {
-          const positions = this.buildCirclePositions(lat, lon, radius);
+        if (Number.isFinite(radius)) {
+          const r = radius as number;
+          const positions = this.buildCirclePositions(lat, lon, r);
           zoneEntity.polygon = {
             hierarchy: positions,
             material: Color.ORANGE.withAlpha(0.15),
             outline: true,
             outlineColor: Color.ORANGE
           } as any;
+        } else {
+          // Fallback: mark the violation location with a small point
+          zoneEntity.position = new ConstantPositionProperty(Cartesian3.fromDegrees(lon, lat));
+          zoneEntity.point = { pixelSize: 6, color: Color.ORANGE.withAlpha(0.9), outlineColor: Color.WHITE, outlineWidth: 1 };
         }
         zoneEntity.label = { text: new ConstantProperty(labelText), font: '12px sans-serif', fillColor: Color.WHITE };
         this.entities?.add(zoneEntity);
@@ -226,8 +241,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         if (existing.label && existing.label.text instanceof ConstantProperty) {
           (existing.label.text as ConstantProperty).setValue(labelText);
         }
-        if (radius) {
-          const positions = this.buildCirclePositions(lat, lon, radius);
+        if (Number.isFinite(radius)) {
+          const r = radius as number;
+          const positions = this.buildCirclePositions(lat, lon, r);
           if ((existing as any).polygon) {
             (existing as any).polygon.hierarchy = positions as any;
             (existing as any).polygon.material = Color.ORANGE.withAlpha(0.15) as any;
@@ -241,6 +257,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               outlineColor: Color.ORANGE
             } as any;
           }
+        } else {
+          // Ensure we at least place a point at violation location
+          (existing as any).polygon = undefined;
+          if (existing.position instanceof ConstantPositionProperty) {
+            (existing.position as ConstantPositionProperty).setValue(Cartesian3.fromDegrees(lon, lat));
+          } else {
+            existing.position = new ConstantPositionProperty(Cartesian3.fromDegrees(lon, lat));
+          }
+          (existing as any).point = { pixelSize: 6, color: Color.ORANGE.withAlpha(0.9), outlineColor: Color.WHITE, outlineWidth: 1 } as any;
         }
       }
       return;
@@ -248,22 +273,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Proximity alert: dashed ring centered on unit position, point at target, and label
     if ((e as any).type === 'PROXIMITY_ALERT') {
-      const pid = `prox-${e.source}-${(e as any).targetIdentifier}`;
+      const targetId = (e as any).targetIdentifier ?? (e as any).otherUnit ?? (e as any).targetId;
+      const pid = `prox-${e.source}-${targetId}`;
       const existing = this.entities?.getById(pid);
-      const labelText = `${(e as any).targetIdentifier} d:${(e as any).distanceMeters}m`;
+      const labelText = `${targetId} d:${(e as any).distanceMeters}m`;
       const proxRadius = (e as any).distanceMeters as number | undefined;
       const unitCenter = this.unitPositions.get(e.source) || { lat, lon };
+      const otherCenter = targetId ? this.unitPositions.get(targetId) : undefined;
       if (!existing) {
+        // If proximity event lacks coordinates, fall back to unit positions
+        const basePos = Number.isFinite(lat) && Number.isFinite(lon)
+          ? Cartesian3.fromDegrees(lon, lat)
+          : Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat);
         this.entities?.add({
           id: pid,
-          position: new ConstantPositionProperty(Cartesian3.fromDegrees(lon, lat)),
+          position: new ConstantPositionProperty(basePos),
           point: { pixelSize: 6, color: Color.RED.withAlpha(0.9), outlineColor: Color.WHITE, outlineWidth: 1 },
           label: { text: new ConstantProperty(labelText), font: '12px sans-serif', fillColor: Color.WHITE }
         });
         // Add dashed ring polyline for proximity
-        if (proxRadius) {
+        if (Number.isFinite(proxRadius)) {
+          const r = proxRadius as number;
           const ringId = `${pid}-ring`;
-          const positions = this.buildCirclePositions(unitCenter.lat, unitCenter.lon, proxRadius);
+          const positions = this.buildCirclePositions(unitCenter.lat, unitCenter.lon, r);
           this.entities?.add({
             id: ringId,
             polyline: {
@@ -273,23 +305,26 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
           });
           const lineId = `${pid}-line`;
-          this.entities?.add({
-            id: lineId,
-            polyline: {
-              positions: [
-                Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat),
-                Cartesian3.fromDegrees(lon, lat)
-              ],
-              width: 2,
-              material: Color.RED.withAlpha(0.6)
-            }
-          });
+          const linePositions = otherCenter
+            ? [Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat), Cartesian3.fromDegrees(otherCenter.lon, otherCenter.lat)]
+            : (Number.isFinite(lat) && Number.isFinite(lon)
+              ? [Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat), Cartesian3.fromDegrees(lon, lat)]
+              : undefined);
+          if (linePositions) {
+            this.entities?.add({
+              id: lineId,
+              polyline: { positions: linePositions, width: 2, material: Color.RED.withAlpha(0.6) }
+            });
+          }
         }
       } else {
+        const basePos = Number.isFinite(lat) && Number.isFinite(lon)
+          ? Cartesian3.fromDegrees(lon, lat)
+          : Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat);
         if (existing.position instanceof ConstantPositionProperty) {
-          (existing.position as ConstantPositionProperty).setValue(Cartesian3.fromDegrees(lon, lat));
+          (existing.position as ConstantPositionProperty).setValue(basePos);
         } else {
-          existing.position = new ConstantPositionProperty(Cartesian3.fromDegrees(lon, lat));
+          existing.position = new ConstantPositionProperty(basePos);
         }
         if (existing.label && existing.label.text instanceof ConstantProperty) {
           (existing.label.text as ConstantProperty).setValue(labelText);
@@ -297,8 +332,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         // Update or create ring entity
         const ringId = `${pid}-ring`;
         const ring = this.entities?.getById(ringId);
-        if (proxRadius) {
-          const positions = this.buildCirclePositions(unitCenter.lat, unitCenter.lon, proxRadius);
+        if (Number.isFinite(proxRadius)) {
+          const r = proxRadius as number;
+          const positions = this.buildCirclePositions(unitCenter.lat, unitCenter.lon, r);
           if (!ring) {
             this.entities?.add({
               id: ringId,
@@ -315,16 +351,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           }
           const lineId = `${pid}-line`;
           const line = this.entities?.getById(lineId);
-          const linePositions = [
-            Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat),
-            Cartesian3.fromDegrees(lon, lat)
-          ];
-          if (!line) {
-            this.entities?.add({ id: lineId, polyline: { positions: linePositions, width: 2, material: Color.RED.withAlpha(0.6) } });
-          } else if (line.polyline) {
-            line.polyline.positions = linePositions as any;
-            line.polyline.width = 2 as any;
-            line.polyline.material = Color.RED.withAlpha(0.6) as any;
+          const updatedLinePositions = otherCenter
+            ? [Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat), Cartesian3.fromDegrees(otherCenter.lon, otherCenter.lat)]
+            : (Number.isFinite(lat) && Number.isFinite(lon)
+              ? [Cartesian3.fromDegrees(unitCenter.lon, unitCenter.lat), Cartesian3.fromDegrees(lon, lat)]
+              : undefined);
+          if (updatedLinePositions) {
+            if (!line) {
+              this.entities?.add({ id: lineId, polyline: { positions: updatedLinePositions, width: 2, material: Color.RED.withAlpha(0.6) } });
+            } else if (line.polyline) {
+              line.polyline.positions = updatedLinePositions as any;
+              line.polyline.width = 2 as any;
+              line.polyline.material = Color.RED.withAlpha(0.6) as any;
+            }
           }
         }
       }
@@ -348,7 +387,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   fitToData() {
     if (this.viewer && this.entities && this.entities.values.length > 0) {
-      this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 100000) });
+      try { this.viewer.camera.cancelFlight(); } catch {}
+      this.viewer.flyTo(this.entities, { offset: new HeadingPitchRange(0, -0.6, 50000) });
     }
   }
 
@@ -369,17 +409,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   zoomIn() {
     const camera = this.viewer?.camera;
     if (!camera) return;
+    try { camera.cancelFlight(); } catch {}
     const height = camera.positionCartographic.height;
-    const amount = Math.max(height * 0.2, camera.defaultZoomAmount);
+    const amount = Math.max(height * 0.5, camera.defaultZoomAmount);
     camera.zoomIn(amount);
+    this.pauseFollow(3000);
   }
 
   zoomOut() {
     const camera = this.viewer?.camera;
     if (!camera) return;
+    try { camera.cancelFlight(); } catch {}
     const height = camera.positionCartographic.height;
-    const amount = Math.max(height * 0.2, camera.defaultZoomAmount);
+    const amount = Math.max(height * 0.5, camera.defaultZoomAmount);
     camera.zoomOut(amount);
+    this.pauseFollow(3000);
+  }
+
+  private pauseFollow(ms: number) {
+    this.followPauseUntil = Date.now() + ms;
   }
 
   ngOnDestroy(): void {
