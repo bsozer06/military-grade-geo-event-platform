@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "XFqhpoSjL1M=",
+  "success": true,
+  "projectFilePath": "C:\\_burhan\\_projects\\military-grade-geo-event-platform\\simulator\\GeoEvents.Simulator\\GeoEvents.Simulator.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Burhan\\.nuget\\packages\\system.net.http.json\\9.0.0\\system.net.http.json.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

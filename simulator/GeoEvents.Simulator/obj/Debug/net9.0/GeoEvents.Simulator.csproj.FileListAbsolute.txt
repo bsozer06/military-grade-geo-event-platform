@@ -1,0 +1,15 @@
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.GeneratedMSBuildEditorConfig.editorconfig
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.AssemblyInfoInputs.cache
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.AssemblyInfo.cs
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.csproj.CoreCompileInputs.cache
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.sourcelink.json
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\bin\Debug\net9.0\GeoEvents.Simulator.exe
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\bin\Debug\net9.0\GeoEvents.Simulator.deps.json
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\bin\Debug\net9.0\GeoEvents.Simulator.runtimeconfig.json
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\bin\Debug\net9.0\GeoEvents.Simulator.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\bin\Debug\net9.0\GeoEvents.Simulator.pdb
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\refint\GeoEvents.Simulator.dll
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.pdb
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\GeoEvents.Simulator.genruntimeconfig.cache
+C:\_burhan\_projects\military-grade-geo-event-platform\simulator\GeoEvents.Simulator\obj\Debug\net9.0\ref\GeoEvents.Simulator.dll
